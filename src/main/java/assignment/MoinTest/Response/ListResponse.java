@@ -30,35 +30,6 @@ public class ListResponse {
     private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public static ResponseEntity<ListResponse> toResponseEntity(SuccessCode successCode, User user, int todayTransferCount, double todayTransferUsdAmount, List<HistoryResponseDto> histories) {
-
-//        int cnt = 0;
-//        double totalUsd = 0;
-//        List<HistoryResponseDto> histories = new ArrayList<>();
-//
-//        for (int i = 0; i < quotes.size(); i++) {
-//            cnt++;
-//            Quote quote = quotes.get(i);
-//
-//            if (quote.getRequest() == null){
-//                continue;
-//            }
-//
-//            totalUsd += quote.getUsdAmount();
-//
-//            HistoryResponseDto hRD = new HistoryResponseDto();
-//            hRD.setSourceAmount(quote.getSourceAmount());
-//            hRD.setFee(quote.getFee());
-//            hRD.setUsdExchangeRate(quote.getUseExchangeRate());
-//            hRD.setUsdAmount(quote.getUsdAmount());
-//            hRD.setTargetCurrency(quote.getTargetCurrency());
-//            hRD.setExchangeRate(quote.getExchangeRate());
-//            hRD.setTargetAmount(quote.getTargetAmount());
-//            hRD.setRequestedDate(quote.getRequestedAt().format(formatter));
-//
-//            histories.add(hRD);
-//
-//        }
-
         return ResponseEntity
                 .status(successCode.getHttpStatus())
                 .header("Content-Type", "application/json;charset=UTF-8" )

@@ -107,7 +107,6 @@ public class QuoteService {
         double targetAmount = (amount-totalFee) * exchangeUnit / exchangeRate;
 
         double round = Math.pow(10.0, pow);
-        System.out.println("round = " + round);
         targetAmount = Math.round(targetAmount*round) / round;
 
         //보낼 금액 음수인 경우 예외 처리
