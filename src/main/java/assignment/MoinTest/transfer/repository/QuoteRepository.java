@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface QuoteRepository extends JpaRepository<Quote, Long> {
 
+    // 필요하면 조회할때 orderBy까지
     List<Quote> findAllByUser(User user);
-
 }
