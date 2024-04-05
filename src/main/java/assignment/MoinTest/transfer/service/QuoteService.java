@@ -115,7 +115,6 @@ public class QuoteService {
             return QuoteResponse.toResponseEntity(ErrorCode.NEGATIVE_NUMBER);
         }
 
-
         Quote quote = new Quote();
         quote.setSourceAmount(quoteRequestDto.getAmount());
         quote.setFee(fee);
@@ -126,7 +125,6 @@ public class QuoteService {
         quote.setTargetAmount(targetAmount);
         quote.setRequestedAt(LocalDateTime.now());
         quote.setUser(user);
-
 
         quoteRepository.save(quote);
 
@@ -259,41 +257,5 @@ public class QuoteService {
 
         return ListResponse.toResponseEntity(SuccessCode.GET_HISTORIES, user, todayCnt, todayTotalUsd, histories);
 
-    }
-
-    public static void main(String[] args) {
-        System.out.println(Currency.getAvailableCurrencies());
-        System.out.println(Currency.getInstance("KRW").getCurrencyCode());
-        System.out.println(Currency.getInstance("KRW").getDisplayName());
-        System.out.println(Currency.getInstance("KRW").getNumericCode());
-        System.out.println(Currency.getInstance("KRW").getSymbol());
-        System.out.println(Currency.getInstance("USD").getCurrencyCode());
-        System.out.println(Currency.getInstance("USD").getDisplayName());
-        System.out.println(Currency.getInstance("USD").getNumericCode());
-        System.out.println(Currency.getInstance("USD").getSymbol());
-
-        System.out.println(Currency.getInstance("USD").getDefaultFractionDigits());
-        System.out.println(Currency.getInstance("JPY").getDefaultFractionDigits());
-
-        double a = 1234.568799999;
-        double ab = Math.round(a);
-        double ac = Math.round(a * 100.0) / 100.0;
-        System.out.println("ab = " + ab);
-        System.out.println("ac = " + ac);
-
-
-        LocalDateTime startOfToday = LocalDateTime.of(LocalDate.now(), LocalTime.MIN); // 오늘 날짜의 시작 시간
-        LocalDateTime endOfToday = LocalDateTime.of(LocalDate.now(), LocalTime.MAX); // 오늘 날짜의 종료 시간
-
-        System.out.println(startOfToday);
-        System.out.println(endOfToday);
-        LocalDateTime now = LocalDateTime.now();
-        System.out.println(now);
-
-        System.out.println(comparator.compare(startOfToday, now));
-        System.out.println(comparator.compare(now,endOfToday));
-        System.out.println(comparator.compare(now, startOfToday));
-        System.out.println(comparator.compare(now,now));
-        System.out.println(comparator.compare(endOfToday,now));
     }
 }
