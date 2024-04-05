@@ -34,7 +34,7 @@ public class UserService {
     public ResponseEntity<BaseResponse> signup(SignupRequestDto signupRequestDto) {
 
         //아이디가 이메일 형식인지 검사
-        String regex = "[_a-z0-9-]+(.[_a-z0-9-]+)*@(?:\\w+\\.)+\\w+$";
+        String regex = "^[a-zA-Z0-9+-\\_.]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(signupRequestDto.getUserId());
 
@@ -63,7 +63,6 @@ public class UserService {
 
         userRepository.save(user);
         return BaseResponse.toResponseEntity(SuccessCode.SIGNUP_SUCCESS);
-
 
     }
 

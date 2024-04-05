@@ -181,7 +181,7 @@ public class QuoteService {
         if(Math.abs(duration.toMinutes()) <= 10){
             LocalDateTime startOfToday = LocalDateTime.of(LocalDate.now(), LocalTime.MIN); // 오늘 날짜의 시작 시간
             LocalDateTime endOfToday = LocalDateTime.of(LocalDate.now(), LocalTime.MAX); // 오늘 날짜의 종료 시간
-            List<Request> requests = requestRepository.findByRequestTimeBetween(startOfToday, endOfToday);
+            List<Request> requests = requestRepository.findByUserAndRequestTimeBetween(user, startOfToday, endOfToday);
             double total = 0;
 
             for (int i = 0; i < requests.size(); i++) {
