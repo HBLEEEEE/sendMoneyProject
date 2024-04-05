@@ -72,7 +72,7 @@ class MoinTestApplicationTests {
 
 	@Test
 	@Order(2)
-	void testSignup_REG_400() {
+	void testSignup_REG_DuplicateUserId_400() {
 		SignupRequestDto signupRequestDto = new SignupRequestDto();
 		signupRequestDto.setUserId("testREG@naver.com");
 		signupRequestDto.setPassword("1234");
@@ -102,7 +102,7 @@ class MoinTestApplicationTests {
 
 	@Test
 	@Order(4)
-	void testSignup_BUSI_400() {
+	void testSignup_BUSI_DuplicateUserId_400() {
 		SignupRequestDto signupRequestDto = new SignupRequestDto();
 		signupRequestDto.setUserId("testBUSI@naver.com");
 		signupRequestDto.setPassword("1234");

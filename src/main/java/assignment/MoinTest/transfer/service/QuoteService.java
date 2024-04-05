@@ -218,7 +218,7 @@ public class QuoteService {
             return ListResponse.toResponseEntity(ErrorCode.USER_NOT_FOUND);
         }
 
-        List<Quote> quotes = quoteRepository.findAllByUser(user);
+        List<Quote> quotes = quoteRepository.findAllByUserOrderByRequestedAtDesc(user);
 
         int todayCnt = 0;
         double todayTotalUsd = 0;
@@ -226,7 +226,7 @@ public class QuoteService {
         LocalDateTime startOfToday = LocalDateTime.of(LocalDate.now(), LocalTime.MIN); // 오늘 날짜의 시작 시간
         LocalDateTime endOfToday = LocalDateTime.of(LocalDate.now(), LocalTime.MAX); // 오늘 날짜의 종료 시간
 
-        for (int i = quotes.size()-1; i >= 0; i--) {
+        for (int i = 0; i < quotes.size(); i++) {
 
             Quote quote = quotes.get(i);
 
