@@ -67,7 +67,7 @@ public class UserService {
 
     }
 
-    public ResponseEntity<LoginResponse> login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
+    public ResponseEntity<LoginResponse> login(LoginRequestDto loginRequestDto) {
 
         Optional<User> found = userRepository.findByUserId(loginRequestDto.getUserId());
         if(!found.isPresent()){
@@ -78,8 +78,6 @@ public class UserService {
 
             String token = jwtUtil.createToken(found.get().getUserId(), found.get().getIdType());
             String split = token.split(" ")[1];
-
-            response.addHeader(jwtUtil.AUTHORIZATION_HEADER, token);
 
             return LoginResponse.toResponseEntity(SuccessCode.LOGIN_SUCCESS, split);
         }else {

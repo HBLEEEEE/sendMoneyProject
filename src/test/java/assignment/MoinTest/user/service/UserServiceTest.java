@@ -1,6 +1,8 @@
 package assignment.MoinTest.user.service;
 
 import assignment.MoinTest.Response.BaseResponse;
+import assignment.MoinTest.Response.LoginResponse;
+import assignment.MoinTest.user.dto.LoginRequestDto;
 import assignment.MoinTest.user.dto.SignupRequestDto;
 import assignment.MoinTest.user.entity.User;
 import assignment.MoinTest.user.repository.UserRepository;
@@ -9,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,43 +26,37 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 class UserServiceTest {
 
-    @InjectMocks
+    @Autowired
     private UserService userService;
-
-    @Mock
-    private UserRepository userRepository;
-
-    @Mock
-    private BCryptPasswordEncoder passwordEncoder;
-
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
 
     @Test
     void signup() {
 
         SignupRequestDto signupRequestDto = new SignupRequestDto();
-        signupRequestDto.setUserId("test@example.com");
-        signupRequestDto.setPassword("password");
+        signupRequestDto.setUserId("test@naver.com");
+        signupRequestDto.setPassword("1234");
         signupRequestDto.setName("Test User");
         signupRequestDto.setIdType("REG_NO");
         signupRequestDto.setIdValue("123456789");
 
-        when(userRepository.findByUserId("test@example.com")).thenReturn(Optional.empty());
-        when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
-        doReturn(null).when(userRepository).save(any(User.class));
-
-        // when
         ResponseEntity<BaseResponse> response = userService.signup(signupRequestDto);
 
-        // then
         assertEquals(200, response.getStatusCodeValue());
         assertEquals("OK", response.getBody().getResultMsg());
+
     }
 
     @Test
     void login() {
+
+        LoginRequestDto loginRequestDto = new LoginRequestDto();
+        loginRequestDto.setUserId("test@naver.com");
+        loginRequestDto.setPassword("1234");
+
+        ResponseEntity<LoginResponse> response = userService.login(loginRequestDto);
+
+        assertEquals(200, response.getBody().getResultCode());
+        assertEquals("OK", response.getBody().getResultMsg());
+
     }
 }
