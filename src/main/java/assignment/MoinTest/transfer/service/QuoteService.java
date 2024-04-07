@@ -44,7 +44,7 @@ public class QuoteService {
     private final RequestRepository requestRepository;
 
     @Transactional
-    public ResponseEntity<QuoteResponse> orderQuote(QuoteRequestDto quoteRequestDto, UserDetailsImpl userDetails){
+    public ResponseEntity<QuoteResponse> quote(QuoteRequestDto quoteRequestDto, UserDetailsImpl userDetails){
         User user = userRepository.findByUserId(userDetails.getUser().getUserId()).orElse(null);
         if (user == null){
             return QuoteResponse.toResponseEntity(ErrorCode.USER_NOT_FOUND);
@@ -92,7 +92,7 @@ public class QuoteService {
 
     @Transactional
     @Lock(value = LockModeType.PESSIMISTIC_WRITE)
-    public ResponseEntity<BaseResponse> requestQuote(RequestDto requestDto, UserDetailsImpl userDetails) {
+    public ResponseEntity<BaseResponse> request(RequestDto requestDto, UserDetailsImpl userDetails) {
 
         User user = userRepository.findByUserId(userDetails.getUser().getUserId()).orElse(null);
         if (user==null){
@@ -146,7 +146,7 @@ public class QuoteService {
 
 
     @Transactional
-    public ResponseEntity<ListResponse> getHistories(UserDetailsImpl userDetails) {
+    public ResponseEntity<ListResponse> list(UserDetailsImpl userDetails) {
 
         User user = userRepository.findByUserId(userDetails.getUser().getUserId()).orElse(null);
         if (user==null){

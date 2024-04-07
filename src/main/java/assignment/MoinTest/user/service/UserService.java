@@ -27,17 +27,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    private static final String emailRegex = "^[a-zA-Z0-9+-\\_.]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$";
-    private static final Pattern emailPattern = Pattern.compile(emailRegex);
-
     @Transactional
     public ResponseEntity<BaseResponse> signup(SignupRequestDto signupRequestDto) {
-
-        //아이디가 이메일 형식인지 검사
-        Matcher matcher = emailPattern.matcher(signupRequestDto.getUserId());
-        if (matcher.matches() == false){
-            return BaseResponse.toResponseEntity(ErrorCode.NOT_MATCH_EMAILFORM);
-        }
 
         //아이디 중복 검사
         User found = userRepository.findByUserId(signupRequestDto.getUserId()).orElse(null);
@@ -63,11 +54,6 @@ public class UserService {
     }
 
     public ResponseEntity<LoginResponse> login(LoginRequestDto loginRequestDto) {
-
-        Matcher matcher = emailPattern.matcher(loginRequestDto.getUserId());
-        if (matcher.matches() == false){
-            return LoginResponse.toResponseEntity(ErrorCode.NOT_MATCH_EMAILFORM);
-        }
 
         User found = userRepository.findByUserId(loginRequestDto.getUserId()).orElse(null);
         if(found == null){

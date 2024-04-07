@@ -1,5 +1,6 @@
 package assignment.MoinTest.user.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -12,6 +13,7 @@ public class SignupRequestDto {
 
     @NotBlank(message = "userId는 공백이 될 수 없습니다.")
     @NotNull(message = "userId는 null이 될 수 없습니다.")
+    @Email(message = "userID는 email 형식이어야 합니다.")
     private String userId;
 
     @NotBlank(message = "password는 공백이 될 수 없습니다.")

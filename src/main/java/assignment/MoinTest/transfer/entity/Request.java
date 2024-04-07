@@ -26,7 +26,7 @@ public class Request {
     @JoinColumn(name =  "user_id")
     private User user;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "quote_id")
     private Quote quote;
 

@@ -24,19 +24,19 @@ public class QuoteController {
     @ResponseBody
     public ResponseEntity<QuoteResponse> quote(@RequestBody QuoteRequestDto quoteRequestDto,
                                                @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return quoteService.orderQuote(quoteRequestDto, userDetails);
+        return quoteService.quote(quoteRequestDto, userDetails);
     }
 
     @PostMapping("/request")
     @ResponseBody
     public ResponseEntity<BaseResponse> request(@RequestBody RequestDto requestDto,
                                                 @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return quoteService.requestQuote(requestDto, userDetails);
+        return quoteService.request(requestDto, userDetails);
     }
 
     @GetMapping("/list")
     public ResponseEntity<ListResponse> list(@AuthenticationPrincipal UserDetailsImpl userDetails){
 
-        return quoteService.getHistories(userDetails);
+        return quoteService.list(userDetails);
     }
 }
