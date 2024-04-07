@@ -21,6 +21,7 @@ public enum ErrorCode {
     NOT_MATCH_EMAILFORM(BAD_REQUEST, "userID가 이메일 형식에 맞지 않습니다."),
     DUPLICATE_USER(BAD_REQUEST, "중복된 UserID입니다."),
     QUOTE_ALREADY_USED(BAD_REQUEST, "이미 처리된 견적서입니다." ),
+    WRONG_QUOTE(BAD_REQUEST, "작성하신 견적서가 아닙니다." ),
 
     // 401 UNAUTHORIZED
     AUTHORIZATION(HttpStatus.UNAUTHORIZED, "수정/삭제할 수 있는 권한이 없습니다."),

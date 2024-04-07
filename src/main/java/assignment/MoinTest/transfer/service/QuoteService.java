@@ -45,6 +45,7 @@ public class QuoteService {
 
     @Transactional
     public ResponseEntity<QuoteResponse> quote(QuoteRequestDto quoteRequestDto, UserDetailsImpl userDetails){
+        //user 확인
         User user = userRepository.findByUserId(userDetails.getUser().getUserId()).orElse(null);
         if (user == null){
             return QuoteResponse.toResponseEntity(ErrorCode.USER_NOT_FOUND);
@@ -55,8 +56,8 @@ public class QuoteService {
             return QuoteResponse.toResponseEntity(ErrorCode.NEGATIVE_NUMBER);
         }
 
-        String targetCurrency = quoteRequestDto.getTargetCurrency();
         //JPY 또는 USD만 취급
+        String targetCurrency = quoteRequestDto.getTargetCurrency();
         TargetCurrencyTypeEnum currencyType = TargetCurrencyTypeEnum.findByCurrencyType(quoteRequestDto.getTargetCurrency());
         if(currencyType == null){
             return QuoteResponse.toResponseEntity(ErrorCode.WRONG_TARGETCURRENCY);
@@ -84,7 +85,6 @@ public class QuoteService {
         quote.setTargetAmount(targetAmount);
         quote.setRequestedAt(LocalDateTime.now());
         quote.setUser(user);
-
         quoteRepository.save(quote);
 
         return QuoteResponse.toResponseEntity(SuccessCode.SAVE_QUOTE, quote);
@@ -93,17 +93,24 @@ public class QuoteService {
     @Transactional
     @Lock(value = LockModeType.PESSIMISTIC_WRITE)
     public ResponseEntity<BaseResponse> request(RequestDto requestDto, UserDetailsImpl userDetails) {
-
+        //user 확인
         User user = userRepository.findByUserId(userDetails.getUser().getUserId()).orElse(null);
         if (user==null){
             return BaseResponse.toResponseEntity(ErrorCode.USER_NOT_FOUND);
         }
 
+        //quote 확인
         Quote quote = quoteRepository.findById(requestDto.getQuoteId()).orElse(null);
         if (quote==null){
             return BaseResponse.toResponseEntity(ErrorCode.QUOTE_NOT_FOUND);
         }
 
+        //해당 quote가 User의 quote인지 확인
+        if(quote.getUser() != user){
+            return BaseResponse.toResponseEntity(ErrorCode.WRONG_QUOTE);
+        }
+
+        //quote 재사용 확인
         if(quote.getRequest() != null){
             return BaseResponse.toResponseEntity(ErrorCode.QUOTE_ALREADY_USED);
         }
@@ -112,6 +119,7 @@ public class QuoteService {
         LocalDateTime quoteCreate = quote.getRequestedAt();
         Duration duration = Duration.between(now, quoteCreate);
 
+        //quote 유효기간 확인
         if (Math.abs(duration.toMinutes()) > 10){
             return BaseResponse.toResponseEntity(ErrorCode.QUOTE_EXPIRED);
         }
@@ -128,6 +136,7 @@ public class QuoteService {
                 .reduce(0D, Double::sum);
         todaySendTotal += quote.getUsdAmount();
 
+        //일일 송금 한도 초과 여부 확인
         if (user.getIdType() == UserIdTypeEnum.REG_NO && todaySendTotal >= 1000){
             return BaseResponse.toResponseEntity(ErrorCode.LIMIT_EXCESS);
         } else if (user.getIdType() == UserIdTypeEnum.BUSINESS_NO && todaySendTotal >= 5000) {
@@ -139,20 +148,20 @@ public class QuoteService {
         request.setUser(user);
         request.setRequestTime(now);
         requestRepository.save(request);
-        quote.setRequest(request);
+        quote.setRequest(request); //quote 사용시 Quote와 Request 매핑
 
         return BaseResponse.toResponseEntity(SuccessCode.REQUEST_QUOTE);
     }
 
-
     @Transactional
     public ResponseEntity<ListResponse> list(UserDetailsImpl userDetails) {
-
+        //유저 확인
         User user = userRepository.findByUserId(userDetails.getUser().getUserId()).orElse(null);
         if (user==null){
             return ListResponse.toResponseEntity(ErrorCode.USER_NOT_FOUND);
         }
 
+        //user의 모든 quote 중 request와 매핑된 것만 리스팅
         List<Quote> quotes = quoteRepository.findAllByUserOrderByRequestedAt(user);
         List<HistoryResponseDto> histories = quotes.stream()
                 .filter(history -> history.getRequest() != null)
@@ -171,6 +180,7 @@ public class QuoteService {
                 })
                 .toList();
 
+        //오늘자 quote 중 request와 매핑된 것만 리스팅
         LocalDate nowDate = LocalDateTime.now().toLocalDate();
         List<Quote> todayQuoteList = quotes.stream()
                 .filter(quote -> quote.getRequest() != null)
@@ -184,6 +194,5 @@ public class QuoteService {
                 .reduce(0D, Double::sum);
 
         return ListResponse.toResponseEntity(SuccessCode.GET_HISTORIES, user, todayCnt, todayTotalUsd, histories);
-
     }
 }

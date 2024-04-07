@@ -43,34 +43,35 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(signupRequestDto.getPassword()));
         user.setName(signupRequestDto.getName());
 
+        //idType 검사
         UserIdTypeEnum userIdType = UserIdTypeEnum.findByIdType(signupRequestDto.getIdType());
         if (userIdType == null){
             return BaseResponse.toResponseEntity(ErrorCode.WRONG_IDTYPE);
         }
+
         user.setIdType(userIdType);
-
         user.setIdValue(passwordEncoder.encode(signupRequestDto.getIdValue()));
-
         userRepository.save(user);
+
         return BaseResponse.toResponseEntity(SuccessCode.SIGNUP_SUCCESS);
     }
 
     public ResponseEntity<LoginResponse> login(LoginRequestDto loginRequestDto) {
 
+        //userID가 있는지 검사
         User found = userRepository.findByUserId(loginRequestDto.getUserId()).orElse(null);
         if(found == null){
             return LoginResponse.toResponseEntity(ErrorCode.USER_NOT_FOUND);
         }
 
-        if (passwordEncoder.matches(loginRequestDto.getPassword(), found.getPassword())){
-
-            String token = jwtUtil.createToken(found.getUserId(), found.getIdType());
-            String split = token.split(" ")[1];
-
-            return LoginResponse.toResponseEntity(SuccessCode.LOGIN_SUCCESS, split);
-        }else {
+        //password 일치 검사
+        if(!passwordEncoder.matches(loginRequestDto.getPassword(), found.getPassword())){
             return LoginResponse.toResponseEntity(ErrorCode.INVALIDATION_PASSWORD);
         }
 
+        String token = jwtUtil.createToken(found.getUserId(), found.getIdType());
+        String split = token.split(" ")[1];
+
+        return LoginResponse.toResponseEntity(SuccessCode.LOGIN_SUCCESS, split);
     }
 }

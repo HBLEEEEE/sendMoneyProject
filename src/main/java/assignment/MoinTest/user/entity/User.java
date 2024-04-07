@@ -42,5 +42,4 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Request> requests = new ArrayList<>();
-
 }

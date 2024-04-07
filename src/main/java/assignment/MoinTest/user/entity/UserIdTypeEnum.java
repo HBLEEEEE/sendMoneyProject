@@ -22,6 +22,4 @@ public enum UserIdTypeEnum {
                 .findAny()
                 .orElse(null);
     }
-
-
 }
