@@ -9,9 +9,6 @@ import lombok.Builder;
 import lombok.Getter;
 import org.springframework.http.ResponseEntity;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Getter
 @Builder
 public class QuoteResponse {

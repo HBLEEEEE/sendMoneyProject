@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface QuoteRepository extends JpaRepository<Quote, Long> {
 
-    List<Quote> findAllByUser(User user);
-
-    List<Quote> findAllByUserOrderByRequestedAtDesc(User user);
+    List<Quote> findAllByUserOrderByRequestedAt(User user);
 
 }

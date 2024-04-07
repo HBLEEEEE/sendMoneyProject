@@ -18,7 +18,7 @@ public enum ErrorCode {
     QUOTE_EXPIRED(BAD_REQUEST, "유효 기간이 지났습니다." ),
     LIMIT_EXCESS(BAD_REQUEST, "일일 송금 최대치를 초과합니다."),
 //    UNKNOWN_ERROR(BAD_REQUEST, "UNKNOWN_ERROR"),
-    NOT_MATCH_EMAILFORM(BAD_REQUEST, "이메일 형식에 맞지 않습니다."),
+    NOT_MATCH_EMAILFORM(BAD_REQUEST, "userID가 이메일 형식에 맞지 않습니다."),
     DUPLICATE_USER(BAD_REQUEST, "중복된 UserID입니다."),
     QUOTE_ALREADY_USED(BAD_REQUEST, "이미 처리된 견적서입니다." ),
 

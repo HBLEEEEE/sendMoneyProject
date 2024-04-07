@@ -1,21 +1,27 @@
 package assignment.MoinTest.user.entity;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+
+import java.util.Arrays;
 
 @Getter
+@ToString
+@RequiredArgsConstructor
 public enum UserIdTypeEnum {
 
-    REG_NO(IdType.REG_NO),  //개인 회원
-    BUSINESS_NO(IdType.BUSINESS_NO);    //법인 회원
+    REG_NO("REG_NO"),  //개인 회원
+    BUSINESS_NO("BUSINESS_NO");    //법인 회원
 
     private final String idType;
 
-    UserIdTypeEnum(String idType){
-        this.idType = idType;
+    public static UserIdTypeEnum findByIdType(String idType){
+        return Arrays.stream(values())
+                .filter(it -> it.idType.equals(idType))
+                .findAny()
+                .orElse(null);
     }
 
-    public static class IdType{
-        public static final String REG_NO = "REG_NO";
-        public static final String BUSINESS_NO = "BUSINESS_NO";
-    }
+
 }

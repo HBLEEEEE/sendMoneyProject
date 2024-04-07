@@ -9,7 +9,8 @@ import java.util.List;
 
 public interface RequestRepository extends JpaRepository<Request, Long> {
 
-    List<Request> findByRequestTimeBetween(LocalDateTime startOfToday, LocalDateTime endOfToday);
     List<Request> findByUserAndRequestTimeBetween(User user, LocalDateTime startOfToday, LocalDateTime endOfToday);
+
+    List<Request> findByUserAndRequestTimeBetweenOrderByRequestTimeDesc(User user, LocalDateTime startOfToday, LocalDateTime endOfToday);
 
 }

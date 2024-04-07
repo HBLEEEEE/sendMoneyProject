@@ -452,6 +452,7 @@ class MoinTestApplicationTests {
 
 		assertEquals(200, response.getBody().getResultCode());
 		assertEquals("OK", response.getBody().getResultMsg());
+		assertEquals(total, response.getBody().getTodayTransferUsdAmount());
 		assertEquals(cnt, response.getBody().getTodayTransferCount());
 		assertEquals(total, response.getBody().getTodayTransferUsdAmount());
 	}

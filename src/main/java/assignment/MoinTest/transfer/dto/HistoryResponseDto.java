@@ -1,9 +1,9 @@
 package assignment.MoinTest.transfer.dto;
 
 
-import lombok.*;
-
-import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter

@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Getter
@@ -48,7 +47,7 @@ public class Quote {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "request_id")
     private Request request;
 
