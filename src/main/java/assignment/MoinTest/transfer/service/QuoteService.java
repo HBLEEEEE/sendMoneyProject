@@ -90,12 +90,10 @@ public class QuoteService {
         return QuoteResponse.toResponseEntity(SuccessCode.SAVE_QUOTE, quote);
     }
 
-    private int cnt = 0;
     @Transactional
     @Lock(value = LockModeType.PESSIMISTIC_WRITE)
     public ResponseEntity<BaseResponse> request(RequestDto requestDto, UserDetailsImpl userDetails) {
 
-        System.out.println("cnt++ = " + cnt++);
         User user = userRepository.findByUserId(userDetails.getUser().getUserId()).orElse(null);
         if (user==null){
             return BaseResponse.toResponseEntity(ErrorCode.USER_NOT_FOUND);
