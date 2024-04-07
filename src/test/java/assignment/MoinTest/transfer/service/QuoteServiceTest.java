@@ -6,6 +6,7 @@ import assignment.MoinTest.Response.QuoteResponse;
 import assignment.MoinTest.security.UserDetailsImpl;
 import assignment.MoinTest.transfer.dto.QuoteRequestDto;
 import assignment.MoinTest.transfer.dto.RequestDto;
+import assignment.MoinTest.transfer.entity.Quote;
 import assignment.MoinTest.transfer.entity.Request;
 import assignment.MoinTest.transfer.repository.QuoteRepository;
 import assignment.MoinTest.transfer.repository.RequestRepository;
@@ -15,7 +16,6 @@ import assignment.MoinTest.user.repository.UserRepository;
 import assignment.MoinTest.user.service.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,8 +25,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 class QuoteServiceTest {
@@ -70,6 +74,54 @@ class QuoteServiceTest {
         quoteRepository.deleteAll();
         requestRepository.deleteAll();
         userRepository.deleteAll();
+    }
+
+    private class RequestWorker implements Runnable{
+
+        private RequestDto requestDto;
+
+        private UserDetailsImpl userDetails;
+
+        public RequestWorker(RequestDto requestDto, UserDetailsImpl userDetails) {
+            this.requestDto = requestDto;
+            this.userDetails = userDetails;
+        }
+
+        @Override
+        public void run() {
+            quoteService.request(requestDto, userDetails);
+        }
+    }
+
+    @Test
+    void testRequest_concurrencyControll_200() throws InterruptedException {
+        //given
+        User userREG = userRepository.findByUserId("testREG@naver.com").orElse(null);
+        UserDetailsImpl userDetails = new UserDetailsImpl(userREG, "testREG@naver.com");
+
+        QuoteRequestDto quoteRequestDto = new QuoteRequestDto();
+        quoteRequestDto.setAmount(100000);
+        quoteRequestDto.setTargetCurrency("USD");
+        ResponseEntity<QuoteResponse> response = quoteService.quote(quoteRequestDto, userDetails);
+        Quote quote = quoteRepository.findById(response.getBody().getQuote().getQuoteId()).orElse(null);
+
+        RequestDto requestDto = new RequestDto();
+        requestDto.setQuoteId(quote.getQuoteId());
+
+        //when
+        CountDownLatch countDownLatch = new CountDownLatch(20);
+        List<RequestWorker> workers = Stream.
+                generate(() -> new RequestWorker(requestDto, userDetails))
+                .limit(20)
+                .collect(Collectors.toList());
+
+        workers.forEach(worker -> new Thread(worker).start());
+
+        countDownLatch.await(1, TimeUnit.SECONDS);
+
+        //then
+        List<Request> requests = requestRepository.findAllByQuote(quote);
+        assertEquals(1, requests.size());
     }
 
     @Test

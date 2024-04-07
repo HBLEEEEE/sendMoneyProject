@@ -4,6 +4,7 @@ import assignment.MoinTest.Response.BaseResponse;
 import assignment.MoinTest.Response.LoginResponse;
 import assignment.MoinTest.user.dto.LoginRequestDto;
 import assignment.MoinTest.user.dto.SignupRequestDto;
+import assignment.MoinTest.user.entity.User;
 import assignment.MoinTest.user.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Order;
@@ -11,6 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,6 +33,46 @@ class UserServiceTest {
     @AfterEach
     public void clearUser(){
         userRepository.deleteAll();
+    }
+
+    private class SignupWorker implements Runnable{
+
+        private SignupRequestDto signupRequestDto;
+
+        public SignupWorker(SignupRequestDto signupRequestDto) {
+            this.signupRequestDto = signupRequestDto;
+        }
+
+        @Override
+        public void run() {
+            userService.signup(signupRequestDto);
+        }
+    }
+
+    @Test
+    void testSignup_concurrencyControll_200() throws InterruptedException {
+        //given
+        SignupRequestDto signupRequestDto = new SignupRequestDto();
+        signupRequestDto.setUserId("testREG@naver.com");
+        signupRequestDto.setPassword("1234");
+        signupRequestDto.setName("REGUser");
+        signupRequestDto.setIdType("REG_NO");
+        signupRequestDto.setIdValue("020315-1234567");
+
+        //when
+        CountDownLatch countDownLatch = new CountDownLatch(20);
+        List<SignupWorker> workers = Stream.
+                generate(() -> new SignupWorker(signupRequestDto))
+                .limit(20)
+                .collect(Collectors.toList());
+
+        workers.forEach(worker -> new Thread(worker).start());
+
+        countDownLatch.await(1, TimeUnit.SECONDS);
+
+        //then
+        List<User> users = userRepository.findAllByUserId(signupRequestDto.getUserId());
+        assertEquals(1, users.size());
     }
 
     @Test
